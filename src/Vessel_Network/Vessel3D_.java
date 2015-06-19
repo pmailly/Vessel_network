@@ -126,11 +126,16 @@ public class Vessel3D_ implements PlugIn {
                 Objects3DPopulation popTmp = getPopFromImage(imgBin);
                 
             // filter size keep only object > minVolume and label image
+                ImageInt imgLabel = ImageInt.wrap(imgOrg);
+                ImageHandler imgObjects = imgLabel.createSameDimensions();
+                imgObjects.set332RGBLut();
+                imgObjects.setCalibration(cal);
                 for (int n = 0; n < popTmp.getNbObjects(); n++) {
                     if (popTmp.getObject(n).getVolumeUnit() > minVolume) {
-                        popTmp.getObject(n));
+                        popTmp.getObject(i).draw(imgObjects, 228);
                     }
                 }
+                imgObjects.getImagePlus().updateAndDraw();
             }
         }      
     }   
