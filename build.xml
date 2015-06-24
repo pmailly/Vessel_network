@@ -71,6 +71,6 @@
 
     -->
  <target name="-post-jar">
-        <copy file="dist/SpineJ.jar" tofile="/opt/Fiji.app/plugins/SpineJ_.jar"/>    
+        <copy file="dist/Vessel_Network.jar" tofile="/opt/Fiji.app/plugins/Vessel3D_.jar"/>    
     </target>    
 </project>
