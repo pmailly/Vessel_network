@@ -87,18 +87,17 @@ public class Vessel3D_ implements PlugIn {
     
      // Calculate lenght of branches after skeletonize
     // Write final results
-    public void analyzeSkeleton (ImagePlus img, double vesselVolume, BufferedWriter output, String fileNameNoExt) {
+    public void analyzeSkeleton (ImagePlus img, float vesselVolume, BufferedWriter output, String fileNameNoExt) {
 	int nbSkeleton;             // number of skeleton
-        double totalLength = 0;     // total branch lenght/spheroid
+        float totalLength = 0;     // total branch lenght/spheroid
         int totalBranches = 0;   // total number of branches/spheroid
-        double imageVolume = img.getWidth()*cal.pixelWidth * img.getHeight()*cal.pixelHeight * img.getNSlices()*cal.pixelDepth;
-        IJ.log("Volume Image :"+imageVolume);
-        double pourcentVessel = vesselVolume/imageVolume;
+        float imageVolume = (float)(img.getWidth()*cal.pixelWidth * img.getHeight()*cal.pixelHeight * img.getNSlices()*cal.pixelDepth);
+        float pourcentVessel = vesselVolume/imageVolume;
         
         AnalyzeSkeleton_ analyzeSkeleton = new AnalyzeSkeleton_();
         AnalyzeSkeleton_.displaySkeletons  = true;
         analyzeSkeleton.setup("",img);
-        SkeletonResult skeletonResults = analyzeSkeleton.run(AnalyzeSkeleton_.NONE,removeBranches,true,null,true,true);
+        SkeletonResult skeletonResults = analyzeSkeleton.run(AnalyzeSkeleton_.NONE,removeBranches,true,null,true,false);
         nbSkeleton = skeletonResults.getNumOfTrees();
         int[] branches = skeletonResults.getBranches();
         for (int b = 0; b < branches.length; b++) { 
@@ -145,7 +144,7 @@ public class Vessel3D_ implements PlugIn {
             FileWriter resultsFile;
             resultsFile = new FileWriter(outDir + "Vessel_results.xls", false);
             BufferedWriter outputResults = new BufferedWriter(resultsFile);
-            outputResults.write("Image\tVessel Volume\t% Vessel Volume\t#Vessel\tTotal branches\tTotal Length\n");
+            outputResults.write("Image\tVessel Volume "+cal.getUnit()+"^3\t% Vessel Volume\t#Vessel\tTotal branches\tTotal Length\n");
             outputResults.flush();
         
             // get the image files
@@ -171,17 +170,18 @@ public class Vessel3D_ implements PlugIn {
                     
                     // Run tubeness
                     TubenessProcessor tubeP = new TubenessProcessor(vesselRadius,true);
-                    ImagePlus tubeImg= tubeP.generateImage(imgClose);
-                    tubeImg.show();
-                    new WaitForUserDialog("Image Tubeness").show();
+                    ImagePlus tubeImg = tubeP.generateImage(imgClose);
+                    //tubeImg.show();
+                    //new WaitForUserDialog("Image Tubeness").show();
                     imgClose.close();
                     imgClose.flush();
                     
                     //  Threshold tubeness and binarize
                     ImagePlus imgBin = threshold(tubeImg);
-                    imgBin.show();
-                    new WaitForUserDialog("Image bin").show();
-                    
+                    //imgBin.show();
+                    //new WaitForUserDialog("Image bin").show();
+                    tubeImg.close();
+                    tubeImg.flush();
                     // Find 3D objects    
                     IJ.showStatus("Computing object population ...");
                     Objects3DPopulation popVessel = getPopFromImage(imgBin);
@@ -192,12 +192,11 @@ public class Vessel3D_ implements PlugIn {
                     imgObjects.set332RGBLut();
                     imgObjects.setCalibration(cal);
                     Random randomGenerator = new Random();
-                    double totalVesselVolume = 0;
+                    float totalVesselVolume = 0;
                     for (int n = 0; n < popVessel.getNbObjects(); n++) {
                         if (popVessel.getObject(n).getVolumeUnit() >= minVolume) {
                             popVessel.getObject(n).draw(imgObjects, randomGenerator.nextInt(255));
-                            totalVesselVolume += totalVesselVolume + popVessel.getObject(n).getVolumeUnit();
-                            IJ.log("Volume : "+popVessel.getObject(n).getVolumeUnit());
+                            totalVesselVolume += popVessel.getObject(n).getVolumeUnit();
                         }
                     }
                     imgObjects.getImagePlus().updateAndDraw();
@@ -217,11 +216,16 @@ public class Vessel3D_ implements PlugIn {
                     skeleton.run(imgSkelBin.getProcessor());
                     imgSkelBin.updateAndDraw();
                     imgSkelBin.show();
-                    new WaitForUserDialog("Image Skeleton").show();
+                    //new WaitForUserDialog("Image Skeleton").show();
                    
                     // Analyze and write info
                     analyzeSkeleton(imgSkelBin, totalVesselVolume, outputResults, fileNameWithOutExt);
+                    imgObjects.getImagePlus().close();
+                    imgObjects.getImagePlus().flush();
                     imgOrg.close();
+                    imgOrg.flush(); 
+                    imgSkelBin.close();
+                    imgSkelBin.flush();
                 }
                 
             }
