@@ -152,9 +152,9 @@ public class Vessel2D_ implements PlugIn {
             int index = 0;
             if (imageFile == null) return;
             for (int i = 0; i < imageFile.length; i++) {
-                if (imageFile[i].endsWith(".tif")) {
+                if (imageFile[i].endsWith(".czi")) {
                     index++;
-                    String fileNameWithOutExt = imageFile[i].substring(0, imageFile[i].indexOf(".tif"));
+                    String fileNameWithOutExt = imageFile[i].substring(0, imageFile[i].indexOf(".czi"));
                     String imagePath = imageDir + imageFile[i];
                     IJ.run("Bio-Formats Importer", "open=["+imagePath+"] autoscale color_mode=Default view=Hyperstack stack_order=XYCZT");
                     ImagePlus imgOrg = WindowManager.getCurrentImage();

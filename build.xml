@@ -8,7 +8,7 @@
 <!-- You can turn off the Compile on Save (or Deploy on Save) setting -->
 <!-- in the project's Project Properties dialog box.-->
 <project name="SpineJ" default="default" basedir=".">
-    <description>Builds, tests, and runs the project SpineJ.</description>
+    <description>2D vessel analyze.</description>
     <import file="nbproject/build-impl.xml"/>
     <!--
 
@@ -71,6 +71,6 @@
 
     -->
  <target name="-post-jar">
-        <copy file="dist/Vessel_Network.jar" tofile="/opt/Fiji.app/plugins/Vessel3D_.jar"/>    
+        <copy file="dist/2DVessel_Network.jar" tofile="/opt/Fiji.app/plugins/Vessel2D_.jar"/>    
     </target>    
 </project>
