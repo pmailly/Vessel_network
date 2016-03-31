@@ -4,15 +4,12 @@ import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.WindowManager;
-import ij.gui.GenericDialog;
 import ij.measure.Calibration;
 import ij.plugin.PlugIn;
 import java.io.File;
 import ij.io.FileSaver;
 import ij.measure.ResultsTable;
 import ij.process.AutoThresholder;
-import ij.process.ImageConverter;
-import java.awt.Color;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -21,11 +18,8 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import Skeletonize3D_.Skeletonize3D_;
-import ij.gui.WaitForUserDialog;
 import ij.plugin.filter.GaussianBlur;
 import ij.plugin.filter.RankFilters;
-import mcib3d.image3d.ImageByte;
-import mcib3d.image3d.ImageHandler;
 import sc.fiji.analyzeSkeleton.Point;
 import sc.fiji.analyzeSkeleton.AnalyzeSkeleton_;
 import sc.fiji.analyzeSkeleton.Edge;
@@ -88,9 +82,9 @@ public class Vessel2D_ implements PlugIn {
         nbSkeleton = skeletonResults.getNumOfTrees();
         skelPt = skeletonResults.getListOfSlabVoxels();
         stats = meanDiameter(imgMap);
-        meanD = stats[0]*2;
-        minD = stats[1]*2;
-        maxD = stats[2]*2;
+        meanD = stats[0];
+        minD = stats[1];
+        maxD = stats[2];
         int[] branches = skeletonResults.getBranches();
         for (int b = 0; b < branches.length; b++) { 
                 totalBranches += branches[b];
@@ -152,9 +146,9 @@ public class Vessel2D_ implements PlugIn {
             int index = 0;
             if (imageFile == null) return;
             for (int i = 0; i < imageFile.length; i++) {
-                if (imageFile[i].endsWith(".czi")) {
+                if (imageFile[i].endsWith(".tif")) {
                     index++;
-                    String fileNameWithOutExt = imageFile[i].substring(0, imageFile[i].indexOf(".czi"));
+                    String fileNameWithOutExt = imageFile[i].substring(0, imageFile[i].indexOf(".tif"));
                     String imagePath = imageDir + imageFile[i];
                     IJ.run("Bio-Formats Importer", "open=["+imagePath+"] autoscale color_mode=Default view=Hyperstack stack_order=XYCZT");
                     ImagePlus imgOrg = WindowManager.getCurrentImage();
